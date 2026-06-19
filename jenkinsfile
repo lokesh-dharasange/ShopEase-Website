@@ -37,14 +37,22 @@ pipeline {
                         sudo apt update &&
                         sudo apt install nginx -y &&
                         sudo systemctl enable nginx &&
-                        sudo systemctl restart nginx &&
-                        sudo rm -rf /var/www/html/* &&
-                        sudo cp -r /home/ubuntu/ShopEase-Website/* /var/www/html/ &&
-                        curl http://localhost
+                        sudo systemctl restart nginx
+                        
                         '
                     """
                 }
             }
+        }
+
+        stage('copy & Deploy') {
+            sh """
+                ssh -o StrictHostKeyChecking=no ${USER}@${TARGET_HOST_IP} '
+                sudo rm -rf /var/www/html/* &&
+                sudo cp -r /home/ubuntu/ShopEase-Website/* /var/www/html/ &&
+                sudo ls -R /var/www/html/
+                '
+            """
         }
 
         stage('Verify Deployment') {
